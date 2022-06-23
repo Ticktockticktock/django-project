@@ -42,27 +42,47 @@
     <!-- Page content -->
     <div class="container-fluid">
             <h2>{{ course.name }}</h2>
-            <div class="card-columns-vertical">
+            <!-- <div class="card-columns-vertical">
                 {% for lesson in course.lesson_set.all %}
                     <div class="card mt-1">
                         <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
                         <div class="card-body">{{lesson.content}}</div>
                     </div>
                 {% endfor %}
-            </div>
+            </div> -->
             <!-- Task: show questions and choices -->
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
 
             <!--
 
-            A collapse example here:
-            <div id="exam" class="collapse">
-                Click to expand elements within the collapse div
-                </div>
+            A collapse example here: -->
+            <!-- <div id="exam" class="collapse">
+                <p>Click to expand elements within the collapse div</p>
+            </div> -->
 
-            -->
+            <!-- <button data-toggle="collapse" data-target="#questionform">Start Exam</button> -->
+            
+            <form id="questionform" action="point to a submit view" method="post">
+                <!-- {% for lesson in course.lesson_set.all %} -->
+                {% for question in question.objects.get(lesson='Lesson object') %}
+                    <!-- {% for question in lesson.all %}
+                        boobs -->
+                        <!-- <div class="card mt-1">
+                            <div class="card-header"><h5>{{ question.question_text}}</h5></div>
+                            <div class="card-header"><h5>{{ question.mark}}</h5></div>
+                        </div>
+                        <br><br> -->
+                    <!-- {% endfor %} -->
+                    <!-- {{lesson.title}} -->
+                    <!-- User.objects.get(first_name="David") -->
 
+                    
+                    {{lesson.title}}
+                    {{lesson.course}}
+                {% endfor %}
+                <input class="btn btn-success btn-block" type="submit" value="Submit">
+            </form>
             <!-- <HINT> If user is authenticated, show course exam with a list of question -->
 
             <!-- <HINT> Each example will have many questions -->
@@ -75,9 +95,9 @@
             <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>
             -->
 
-            <!-- A choice submission form example
-            <form id="questionform" action="point to a submit view" method="post">
-                        ... for each question in the course ...
+            <!-- A choice submission form example -->
+            <!-- <form id="questionform" action="point to a submit view" method="post">
+                {% for question in course.lesson_set.content.all %}
                         <div class="card mt-1">
                             <div class="card-header"><h5>{{ question.question_text}}</h5></div>
                             {% csrf_token %}
@@ -92,6 +112,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     <input class="btn btn-success btn-block" type="submit" value="Submit">
             </form> -->
 
