@@ -76,7 +76,7 @@
             -->
 
             <!-- A choice submission form example -->
-            <form id="questionform" action="{% url 'onlinecourse:submit' %}" method="post">
+            <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
                 {% for lesson in course.lesson_set.all %}
                     <div class="card mt-1">
                     {% for question in lesson.question_set.all %}
@@ -95,8 +95,8 @@
                             </div>
                     {% endfor %}
                     </div>
+                    <input class="btn btn-success btn-block" type="submit" value="Submit">
                 {% endfor %}
-                <input class="btn btn-success btn-block" type="submit" value="Submit">
             </form>
 
             <!--Check here to see more details Bootstrap checkbox
