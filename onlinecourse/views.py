@@ -149,14 +149,20 @@ def show_exam_result(request, course_id, submission_id):
 
     chosen_temp = Submission.objects.filter(id = submission_id).values('choices')
 
-    temp_score = []  #score list
+    correct_score = []  #correct score list
+    false_score = []  #incorrect score list
     for it in submission.choices.all().filter(is_correct=True).values('question_id'):
         #For each question object, add the mark to the score list 
-        temp_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
+        correct_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
+
+    for it in submission.choices.all().filter(is_correct=False).values('question_id'):
+        #For each wrong question object, add the mark to the score list 
+        false_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
+
 
     context = {}
     context['selected'] = [it['choices'] for it in chosen_temp]  #Query set (list of dic) to list of values
-    context['mark'] = int((sum(temp_score)/25)*100) #Add up the score list and work out % off 100
+    context['mark'] = int(((sum(correct_score)-(len(false_score)*5))/25)*100) #Add up the score list and work out % off 100
     context['course'] = course
 
     return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)

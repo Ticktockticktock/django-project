@@ -28,7 +28,7 @@
                         {% csrf_token %}
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Username" name="psw" >
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >
                             <button class="btn btn-primary" type="submit">Login</button>
                             <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
                         </div>
@@ -60,8 +60,6 @@
             <!-- <div id="exam" class="collapse">
                 <p>Click to expand elements within the collapse div</p>
             </div> -->
-
-            <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#questionform">Start Exam</button>
             
             <!-- <HINT> If user is authenticated, show course exam with a list of question -->
 
@@ -75,8 +73,10 @@
             <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>
             -->
             {% if user.is_authenticated %}
+            <button class="btn btn-info btn-block" data-toggle="collapse" data-target="#questionform" aria-expanded="false" aria-controls="questionform">Start Exam</button>
+
             <!-- A choice submission form example -->
-                <form id="questionform" action="submit/" method="post">
+                <form id="questionform" class = "collapse" action="submit/" method="post">
                     {% for lesson in course.lesson_set.all %}
                         <div class="card mt-1">
                         {% for question in lesson.question_set.all %}
