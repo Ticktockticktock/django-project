@@ -39,13 +39,13 @@
             <div class="alert alert-success">
                 <!--HINT Display passed info -->
                 <p><b>Congratulations {{user.username}}! 
-                </b>You have passed the exam. Your score is: {{mark}} / 20</p>
+                </b>You have passed the exam. Your score is: {{mark}} / 100</p>
             </div>
         {% else %}
             <div class="alert alert-danger">
                 <!--HINT Display failed info -->
                 <p><b>Failed.</b> Sorry {{user.username}}!</b> 
-                </b>You have failed the exam. Your score is: {{mark}} / 20</p>
+                </b>You have failed the exam. Your score is: {{mark}} / 100</p>
             </div>
             
             <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
@@ -64,14 +64,12 @@
                                 <div class="form-check">
                                     {% if choice.id in selected %}
                                         {% if choice.is_correct == True %}
-                                            <div>
-                                                <b>Correct answer: {{choice.choice}}</b>
-                                            </div>
+                                            <span class="text-success">Correct answer: {{choice.choice}}</span>
                                         {% else %}
-                                            <div>
-                                                <b>Wrong answer: {{choice.choice}}</b>
-                                            </div>
+                                            <span class="text-warning">Wrong answer: {{choice.choice}}</span>
                                         {% endif %}
+                                    {% elif choice.is_correct == True %}
+                                        <span class="text-warning">Not Selected: {{choice.choice}}</span>
                                     {% else %}
                                         <div>{{choice.choice}}</div>
                                     {% endif %}

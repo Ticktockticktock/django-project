@@ -115,7 +115,6 @@ def submit(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
     user = request.user
     enrollment = Enrollment.objects.get(user=user, course=course)
-
     submission = Submission.objects.create(enrollment =enrollment)
     answers = extract_answers(request)
 
@@ -145,21 +144,19 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    user_mark = 0
     course = Course.objects.get(id = course_id)
     submission = Submission.objects.get(id = submission_id)
-    
-    selected = Submission.objects.filter(id = submission_id).values_list('choices',flat = True)
-        
-    for i in submission.choices.all().filter(is_correct=True).values_list('question_id'):
-        user_mark += Question.objects.filter(id=i[0]).first().mark    
-    
-    
+
+    chosen_temp = Submission.objects.filter(id = submission_id).values('choices')
+
+    temp_score = []  #score list
+    for it in submission.choices.all().filter(is_correct=True).values('question_id'):
+        #For each question object, add the mark to the score list 
+        temp_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
+
     context = {}
-    context['selected'] = selected
-    context['mark'] = int(user_mark)
+    context['selected'] = [it['choices'] for it in chosen_temp]  #Query set (list of dic) to list of values
+    context['mark'] = int((sum(temp_score)/25)*100) #Add up the score list and work out % off 100
     context['course'] = course
 
     return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)
-
-
