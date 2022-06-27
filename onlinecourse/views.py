@@ -3,7 +3,7 @@ from re import sub
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # <HINT> Import any new Models here
-from .models import Course, Enrollment, Question, Choice, Submission
+from .models import Course, Enrollment, Question, Choice, Submission, Lesson
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -146,23 +146,31 @@ def extract_answers(request):
 def show_exam_result(request, course_id, submission_id):
     course = Course.objects.get(id = course_id)
     submission = Submission.objects.get(id = submission_id)
-
     chosen_temp = Submission.objects.filter(id = submission_id).values('choices')
 
-    correct_score = []  #correct score list
-    false_score = []  #incorrect score list
+    lesson = Lesson.objects.get(course=course)
+    questions = Question.objects.filter(lesson=lesson)
+
+    #Total possible score
+    total_score = []
+    for it in questions:
+        for ch in Choice.objects.filter(question=it):
+            if ch.is_correct == True:
+                total_score.append(it.mark)
+
+    #User score list
+    user_score = []
+    #For each correct question object, add the mark to the score list 
     for it in submission.choices.all().filter(is_correct=True).values('question_id'):
-        #For each question object, add the mark to the score list 
-        correct_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
+        user_score.append(Question.objects.filter(id=it['question_id'])[0].mark)
 
+    #For each wrong question object, add a negative mark to the score list
     for it in submission.choices.all().filter(is_correct=False).values('question_id'):
-        #For each wrong question object, add the mark to the score list 
-        false_score.append( Question.objects.filter(id=it['question_id'])[0].mark)
-
+        user_score.append(-Question.objects.filter(id=it['question_id'])[0].mark)
 
     context = {}
     context['selected'] = [it['choices'] for it in chosen_temp]  #Query set (list of dic) to list of values
-    context['mark'] = int(((sum(correct_score)-(len(false_score)*5))/25)*100) #Add up the score list and work out % off 100
+    context['mark'] = int((sum(user_score)/sum(total_score))*100) #Add up the score list and work out % off 100
     context['course'] = course
 
     return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)
